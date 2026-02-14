@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { BackToTop } from "@/components/ui/BackToTop";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import "./globals.css";
 
 const fontSans = Inter({
@@ -45,6 +46,7 @@ export default function RootLayout({
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}
       >
         <ThemeProvider>
+          <LoadingScreen />
           <ScrollProgress />
           <CustomCursor />
           <div className="relative min-h-screen">
