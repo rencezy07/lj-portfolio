@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
+import emailjs from "@emailjs/browser";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { Button } from "@/components/ui/Button";
@@ -12,6 +13,7 @@ import { siteConfig } from "@/data/portfolio";
 function FormField({
   label,
   id,
+  name,
   type = "text",
   value,
   onChange,
@@ -20,6 +22,7 @@ function FormField({
 }: {
   label: string;
   id: string;
+  name: string;
   type?: string;
   value: string;
   onChange: (val: string) => void;
@@ -43,6 +46,7 @@ function FormField({
       {rows ? (
         <textarea
           id={id}
+          name={name}
           required
           rows={rows}
           value={value}
@@ -55,6 +59,7 @@ function FormField({
       ) : (
         <input
           id={id}
+          name={name}
           type={type}
           required
           value={value}
@@ -84,20 +89,35 @@ export function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
     setIsSubmitting(true);
+    setError("");
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        {
+          user_name: formState.name,
+          user_email: formState.email,
+          message: formState.message,
+        },
+        { publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY! }
+      );
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormState({ name: "", email: "", message: "" });
-
-    // Reset success message after 3 seconds
-    setTimeout(() => setIsSubmitted(false), 3000);
+      setIsSubmitted(true);
+      setFormState({ name: "", email: "", message: "" });
+      setTimeout(() => setIsSubmitted(false), 4000);
+    } catch {
+      setError("Failed to send message. Please try again or email me directly.");
+      setTimeout(() => setError(""), 5000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -161,6 +181,7 @@ export function Contact() {
                 <FormField
                   label="Name"
                   id="name"
+                  name="user_name"
                   value={formState.name}
                   onChange={(val) => setFormState({ ...formState, name: val })}
                   placeholder="Your name"
@@ -168,6 +189,7 @@ export function Contact() {
                 <FormField
                   label="Email"
                   id="email"
+                  name="user_email"
                   type="email"
                   value={formState.email}
                   onChange={(val) => setFormState({ ...formState, email: val })}
@@ -178,34 +200,47 @@ export function Contact() {
               <FormField
                 label="Message"
                 id="message"
+                name="message"
                 value={formState.message}
                 onChange={(val) => setFormState({ ...formState, message: val })}
                 placeholder="Tell me about your project..."
                 rows={5}
               />
 
-              <div className="flex items-center gap-4">
-                <Button type="submit" size="lg" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="h-4 w-4 border-2 border-current border-t-transparent rounded-full"
-                    />
-                  ) : (
-                    "Send Message"
-                  )}
-                </Button>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-4">
+                  <Button type="submit" size="lg" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="h-4 w-4 border-2 border-current border-t-transparent rounded-full"
+                      />
+                    ) : (
+                      "Send Message"
+                    )}
+                  </Button>
 
-                {isSubmitted && (
-                  <motion.span
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-sm text-muted-foreground"
+                  {isSubmitted && (
+                    <motion.span
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-sm text-emerald-600 dark:text-emerald-400"
+                    >
+                      Message sent successfully!
+                    </motion.span>
+                  )}
+                </div>
+
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-sm text-red-500"
                   >
-                    Message sent successfully!
-                  </motion.span>
+                    {error}
+                  </motion.p>
                 )}
               </div>
             </form>

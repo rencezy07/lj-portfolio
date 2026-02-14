@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
+import { BackToTop } from "@/components/ui/BackToTop";
 import "./globals.css";
 
 const fontSans = Inter({
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   description:
     "A minimal, elegant developer portfolio showcasing projects, experience, and skills.",
   keywords: ["developer", "portfolio", "frontend", "fullstack", "engineer"],
-  authors: [{ name: "Your Name" }],
+  authors: [{ name: "Laurence Jay Perez" }],
   openGraph: {
     title: "lj.",
     description:
@@ -51,6 +52,7 @@ export default function RootLayout({
             <main>{children}</main>
             <Footer />
           </div>
+          <BackToTop />
         </ThemeProvider>
       </body>
     </html>
