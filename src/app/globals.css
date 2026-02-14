@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #fafafa;
+    --foreground: #0a0a0a;
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+    --border: #e5e5e5;
+    --accent: #171717;
+    --accent-foreground: #fafafa;
+    --surface: #ffffff;
+  }
+
+  .dark {
+    --background: #0a0a0a;
+    --foreground: #fafafa;
+    --muted: #171717;
+    --muted-foreground: #a3a3a3;
+    --border: #262626;
+    --accent: #fafafa;
+    --accent-foreground: #0a0a0a;
+    --surface: #111111;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* offset for fixed header on anchor jumps */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+
+  /* Smooth global transitions for theme switching */
+  body,
+  body * {
+    transition-property: background-color, border-color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Smooth focus styles */
+input:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
